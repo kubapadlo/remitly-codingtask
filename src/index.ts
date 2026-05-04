@@ -1,14 +1,26 @@
-import express, { Request, Response } from 'express';
+import express from "express";
+import { AppDataSource } from "./data-source";
+import router from "./routes/routes";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
+app.use("/", router);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World');
-});
+app.post("/chaos", (req, res) => process.exit(1));
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+const start = async () => {
+    while (true) {
+        try {
+            await AppDataSource.initialize();
+            console.log("Data Source initialized!");
+            break;
+        } catch (err) {
+            console.log("Waiting for DB...", err);
+            await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+    }
+    const PORT = process.env.PORT ?? 3000;
+    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+};
+
+start();
