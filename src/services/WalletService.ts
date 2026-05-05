@@ -64,8 +64,12 @@ export class WalletService {
                 walletStock.quantity += 1;
                 await walletRepo.save(walletStock);
             } else {
-                const walletStock = await walletRepo.findOneBy({ walletId, stockName });
-                if (!walletStock || walletStock.quantity < 1) {
+                let walletStock = await walletRepo.findOneBy({ walletId, stockName });
+                if (!walletStock) {
+                    walletStock = walletRepo.create({ walletId, stockName, quantity: 0 });
+                    await walletRepo.save(walletStock);
+                }
+                if (walletStock.quantity < 1) {
                     result = { ok: false, status: 400, error: `Wallet '${walletId}' has no '${stockName}' to sell` };
                     return;
                 }

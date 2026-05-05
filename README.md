@@ -48,15 +48,6 @@ Base URL: `http://localhost:{PORT}`
 | GET | `/log` | 200 | Get audit log |
 | POST | `/chaos` | - | Kill the instance handling this request |
 
-### Business rules
-
-- `POST /wallets/{id}/stocks/{name}` - body must be `{ "type": "buy" | "sell" }`
-- **buy** fails with `400` if the bank has 0 units of that stock
-- **sell** fails with `400` if the wallet has 0 units of that stock
-- Both fail with `404` if the stock has never been added to the bank via `POST /stocks`
-- A wallet is created automatically on the first successful buy
-- `POST /chaos` kills the instance handling the request - the other instance continues serving traffic
-
 ---
 
 ## Tech stack
